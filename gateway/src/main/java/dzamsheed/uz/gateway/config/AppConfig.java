@@ -19,6 +19,8 @@ public class AppConfig {
                         .uri("lb://CLIENT-SERVICE"))
                 .route("auth-service", r -> r.path("/auth/**")
                         .uri("lb://AUTH-SERVICE"))
+                .route("amqp-publisher", r -> r.path("/publisher/**")
+                        .uri("lb://AMQP-PUBLISHER"))
                 .build();
     }
 

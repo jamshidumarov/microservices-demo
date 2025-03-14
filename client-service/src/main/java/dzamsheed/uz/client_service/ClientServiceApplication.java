@@ -1,4 +1,4 @@
-package dzamsheed.uz.gateway;
+package dzamsheed.uz.client_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,9 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class GatewayApplication {
+public class ClientServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GatewayApplication.class, args);
+		SpringApplication.run(ClientServiceApplication.class, args);
 	}
+
 }

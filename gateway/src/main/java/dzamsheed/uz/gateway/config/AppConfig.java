@@ -21,6 +21,8 @@ public class AppConfig {
                         .uri("lb://AUTH-SERVICE"))
                 .route("amqp-publisher", r -> r.path("/publisher/**")
                         .uri("lb://AMQP-PUBLISHER"))
+                .route("keycloak-service", r -> r.path("/keycloak/**")
+                        .uri("lb://KEYCLOAK-SERVICE"))
                 .build();
     }
 

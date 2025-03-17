@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Publisher {
+public class RabbitMQPublisher {
     private static final String QUEUE_NAME = "test-queue";
 
 
@@ -14,5 +14,6 @@ public class Publisher {
 
     public void sendMessage(String message) {
         rabbitTemplate.convertAndSend(QUEUE_NAME, message);
+        System.out.println("Message sent rabbitMQ: " + message);
     }
 }

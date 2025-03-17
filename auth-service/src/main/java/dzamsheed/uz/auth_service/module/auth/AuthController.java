@@ -2,6 +2,7 @@ package dzamsheed.uz.auth_service.module.auth;
 
 import dzamsheed.uz.auth_service.module.users.User;
 import dzamsheed.uz.auth_service.module.users.UserRepository;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +79,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate-token")
+    @PermitAll
     public ResponseEntity<Map<String, Object>> parseToken(@RequestHeader("Authorization") String token) {
         Map<String, Object> retVal = new HashMap<>();
         if (token != null && token.startsWith("Bearer ")){

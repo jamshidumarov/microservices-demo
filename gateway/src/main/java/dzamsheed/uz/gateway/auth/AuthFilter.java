@@ -5,6 +5,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
@@ -36,6 +37,10 @@ public class AuthFilter implements GatewayFilter {
                 .uri("/auth/validate-token")
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response ->
+                        Mono.error(new RuntimeException("Client error: " + response.statusCode())))
+                .onStatus(HttpStatusCode::is5xxServerError, response ->
+                        Mono.error(new RuntimeException("Server error: " + response.statusCode())))
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
                 .flatMap(response -> {
@@ -59,6 +64,10 @@ public class AuthFilter implements GatewayFilter {
                         return exchange.getResponse().setComplete();
                     }
                     return chain.filter(exchange);
+                })
+                .onErrorResume(e -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 });
     }
 }

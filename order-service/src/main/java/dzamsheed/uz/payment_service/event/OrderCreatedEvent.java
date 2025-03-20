@@ -11,7 +11,7 @@ public class OrderCreatedEvent {
     private String orderId;
     private Integer productId;
     private Double price;
-    private Integer amount;
+    private Integer quantity;
     private String status;
 }
 

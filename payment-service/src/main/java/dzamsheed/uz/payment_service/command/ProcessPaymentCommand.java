@@ -14,7 +14,6 @@ public class ProcessPaymentCommand implements Serializable {
     @TargetAggregateIdentifier
     private String paymentId;
     private String orderId;
-    private Integer amount;
-    private Double price;
+    private Double totalPrice;
 }
 

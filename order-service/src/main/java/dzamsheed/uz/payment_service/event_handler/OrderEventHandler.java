@@ -21,7 +21,7 @@ public class OrderEventHandler {
                         .builder()
                         .id(event.getOrderId())
                         .productId(event.getProductId())
-                        .amount(event.getAmount())
+                        .quantity(event.getQuantity())
                         .price(event.getPrice())
                         .status(event.getStatus())
                         .build()

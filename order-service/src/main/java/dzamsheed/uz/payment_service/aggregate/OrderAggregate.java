@@ -18,7 +18,7 @@ public class OrderAggregate {
     @AggregateIdentifier
     private String orderId;
     private Integer productId;
-    private Integer amount;
+    private Integer quantity;
     private Double price;
     private String status;
 
@@ -28,7 +28,7 @@ public class OrderAggregate {
                 command.getOrderId(),
                 command.getProductId(),
                 command.getPrice(),
-                command.getAmount(),
+                command.getQuantity(),
                 "PENDING"
         ));
     }
@@ -37,7 +37,7 @@ public class OrderAggregate {
     public void on(OrderCreatedEvent event) {
         this.orderId = event.getOrderId();
         this.productId = event.getProductId();
-        this.amount = event.getAmount();
+        this.quantity = event.getQuantity();
         this.price = event.getPrice();
         this.status = event.getStatus();
     }

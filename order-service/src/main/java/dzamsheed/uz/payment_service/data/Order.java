@@ -16,7 +16,12 @@ public class Order {
     @Id
     private String id;
     private Integer productId;
-    private Integer amount;
+    private Integer quantity;
     private Double price;
     private String status;  // PENDING, PAID, SHIPPED, CANCELLED
+
+    public Order(String id, String status) {
+        this.id = id;
+        this.status = status;
+    }
 }

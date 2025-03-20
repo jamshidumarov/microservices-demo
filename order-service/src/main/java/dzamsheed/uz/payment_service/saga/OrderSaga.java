@@ -23,7 +23,7 @@ public class OrderSaga {
     public void handle(OrderCreatedEvent event) {
         log.info("Order Created Event received for OrderId: {}", event.getOrderId());
 
-        ProcessPaymentCommand command = new ProcessPaymentCommand(UUID.randomUUID().toString(), event.getOrderId(), event.getAmount(), event.getPrice());
+        ProcessPaymentCommand command = new ProcessPaymentCommand(UUID.randomUUID().toString(), event.getOrderId(), event.getQuantity() * event.getPrice());
         commandGateway.send(command);
     }
 }

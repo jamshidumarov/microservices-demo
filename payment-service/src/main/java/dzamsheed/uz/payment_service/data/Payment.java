@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "orders")
+@Table
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,8 +17,13 @@ import lombok.NoArgsConstructor;
 public class Payment {
     @Id
     private String id;
-    private Integer productId;
-    private Integer amount;
-    private Double price;
-    private String status;  // PENDING, PAID, SHIPPED, CANCELLED
+    private String orderId;
+    private Double totalPrice;
+    private Double paid;
+    private String status;
+
+    public Payment(String orderId, String status) {
+        this.orderId = orderId;
+        this.status = status;
+    }
 }

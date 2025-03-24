@@ -1,12 +1,12 @@
 package dzamsheed.uz.payment_service.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Entity
 @Table
@@ -23,6 +23,7 @@ public class Payment {
     private String status;
 
     public Payment(String orderId, String status) {
+        this.id = UUID.randomUUID().toString();
         this.orderId = orderId;
         this.status = status;
     }

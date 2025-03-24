@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  id="Definitions_1"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:process id="orderSagaProcess" name="Order Saga Process" isExecutable="true" camunda:historyTimeToLive="180">
+
+    <!-- Start Event -->
+    <bpmn:startEvent id="StartEvent">
+      <bpmn:outgoing>flow0</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <!-- Set Order ID -->
+    <bpmn:scriptTask id="setOrderIdTask" name="Set Order ID" scriptFormat="JUEL">
+      <bpmn:script><![CDATA[
+        execution.setVariable("orderId", execution.getBusinessKey());
+      ]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:sequenceFlow id="flow0" sourceRef="StartEvent" targetRef="setOrderIdTask"/>
+    <bpmn:sequenceFlow id="flow1" sourceRef="setOrderIdTask" targetRef="OrderCreatedTask"/>
+
+    <!-- Create Order Task -->
+    <bpmn:serviceTask id="OrderCreatedTask" name="Create Order" camunda:delegateExpression="${createOrderDelegate}">
+      <bpmn:incoming>flow1</bpmn:incoming>
+      <bpmn:outgoing>flow2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:boundaryEvent id="OrderCreatedCompensation" attachedToRef="OrderCreatedTask">
+      <bpmn:compensateEventDefinition/>
+    </bpmn:boundaryEvent>
+
+    <bpmn:sequenceFlow id="flow2" sourceRef="OrderCreatedTask" targetRef="PaymentTask"/>
+
+    <!-- Process Payment -->
+    <bpmn:serviceTask id="PaymentTask" name="Process Payment" camunda:delegateExpression="${processPaymentDelegate}">
+      <bpmn:incoming>flow2</bpmn:incoming>
+      <bpmn:outgoing>flow3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Payment Failed Error -->
+    <bpmn:boundaryEvent id="PaymentFailed" attachedToRef="PaymentTask">
+      <bpmn:errorEventDefinition errorRef="PAYMENT_FAILED"/>
+    </bpmn:boundaryEvent>
+
+    <bpmn:sequenceFlow id="flow3" sourceRef="PaymentTask" targetRef="DeliveryTask"/>
+
+    <!-- Deliver Order -->
+    <bpmn:serviceTask id="DeliveryTask" name="Deliver Order" camunda:delegateExpression="${deliverOrderDelegate}">
+      <bpmn:incoming>flow3</bpmn:incoming>
+      <bpmn:outgoing>flow4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:boundaryEvent id="DeliveryCompensation" attachedToRef="DeliveryTask">
+      <bpmn:compensateEventDefinition/>
+    </bpmn:boundaryEvent>
+
+    <bpmn:sequenceFlow id="flow4" sourceRef="DeliveryTask" targetRef="EndEvent"/>
+
+    <!-- End Event -->
+    <bpmn:endEvent id="EndEvent">
+      <bpmn:incoming>flow4</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Compensation Tasks -->
+    <bpmn:serviceTask id="CancelOrderTask" name="Cancel Order" isForCompensation="true" camunda:delegateExpression="${cancelOrderDelegate}"/>
+    <bpmn:serviceTask id="RefundPaymentTask" name="Refund Payment" isForCompensation="true" camunda:delegateExpression="${refundPaymentDelegate}"/>
+    <bpmn:serviceTask id="CancelDeliveryTask" name="Cancel Delivery" isForCompensation="true" camunda:delegateExpression="${cancelDeliveryDelegate}"/>
+
+    <!-- Compensation Associations -->
+    <bpmn:association id="OrderCreatedCompensationAssociation" sourceRef="OrderCreatedCompensation" targetRef="CancelOrderTask"/>
+    <bpmn:association id="PaymentCompensationAssociation1" sourceRef="PaymentFailed" targetRef="RefundPaymentTask"/>
+    <bpmn:association id="PaymentCompensationAssociation2" sourceRef="PaymentFailed" targetRef="CancelOrderTask"/>
+    <bpmn:association id="DeliveryCompensationAssociation1" sourceRef="DeliveryCompensation" targetRef="CancelDeliveryTask"/>
+    <bpmn:association id="DeliveryCompensationAssociation2" sourceRef="DeliveryCompensation" targetRef="CancelOrderTask"/>
+
+  </bpmn:process>
+</bpmn:definitions>

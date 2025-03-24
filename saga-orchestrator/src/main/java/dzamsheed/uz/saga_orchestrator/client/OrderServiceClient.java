@@ -4,12 +4,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "order-service", url = "http://localhost:8086/orders")
+@FeignClient(name = "order-service", url = "http://localhost:8086")
 public interface OrderServiceClient {
     
-    @PostMapping("/create/{orderId}")
+    @PostMapping("/orders/create/{orderId}")
     void createOrder(@PathVariable String orderId);
 
-    @PostMapping("/cancel/{orderId}")
+    @PostMapping("/orders/cancel/{orderId}")
     void cancelOrder(@PathVariable String orderId);
 }

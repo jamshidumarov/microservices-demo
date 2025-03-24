@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Table
 @Data
@@ -23,8 +25,9 @@ public class Delivery {
     private Boolean shipped;
     private String status;
 
-    public Delivery(String id, String status) {
-        this.id = id;
+    public Delivery(String orderId, String status) {
+        this.id = UUID.randomUUID().toString();
+        this.orderId = orderId;
         this.status = status;
     }
 }
